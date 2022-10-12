@@ -12,7 +12,7 @@ from .clip_tokenizer import SimpleTokenizer
 from .constants import _UNCONDITIONAL_TOKENS, _ALPHAS_CUMPROD
 from PIL import Image
 
-MAX_TEXT_LEN = 100
+MAX_TEXT_LEN = 77
 
 
 class StableDiffusion:
@@ -51,13 +51,13 @@ class StableDiffusion:
     ):
         # Tokenize prompt (i.e. starting context)
         inputs = self.tokenizer.encode(prompt)
-        assert len(inputs) < 100, "Prompt is too long (should be < 100 tokens)"
-        phrase = inputs + [49407] * (100 - len(inputs))
+        assert len(inputs) < 77, "Prompt is too long (should be < 77 tokens)"
+        phrase = inputs + [49407] * (77 - len(inputs))
         phrase = np.array(phrase)[None].astype("int32")
         phrase = np.repeat(phrase, batch_size, axis=0)
 
         # Encode prompt tokens (and their positions) into a "context vector"
-        pos_ids = np.array(list(range(100)))[None].astype("int32")
+        pos_ids = np.array(list(range(77)))[None].astype("int32")
         pos_ids = np.repeat(pos_ids, batch_size, axis=0)
         context = self.text_encoder.predict_on_batch([phrase, pos_ids])
         
