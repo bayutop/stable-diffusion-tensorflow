@@ -12,7 +12,7 @@ from .clip_tokenizer import SimpleTokenizer
 from .constants import _UNCONDITIONAL_TOKENS, _ALPHAS_CUMPROD
 from PIL import Image
 
-MAX_TEXT_LEN = 77
+MAX_TEXT_LEN = 100
 
 
 class StableDiffusion:
@@ -51,13 +51,13 @@ class StableDiffusion:
     ):
         # Tokenize prompt (i.e. starting context)
         inputs = self.tokenizer.encode(prompt)
-        assert len(inputs) < 77, "Prompt is too long (should be < 77 tokens)"
-        phrase = inputs + [49407] * (77 - len(inputs))
+        assert len(inputs) < 100, "Prompt is too long (should be < 100 tokens)"
+        phrase = inputs + [49407] * (100 - len(inputs))
         phrase = np.array(phrase)[None].astype("int32")
         phrase = np.repeat(phrase, batch_size, axis=0)
 
         # Encode prompt tokens (and their positions) into a "context vector"
-        pos_ids = np.array(list(range(77)))[None].astype("int32")
+        pos_ids = np.array(list(range(100)))[None].astype("int32")
         pos_ids = np.repeat(pos_ids, batch_size, axis=0)
         context = self.text_encoder.predict_on_batch([phrase, pos_ids])
         
@@ -225,19 +225,23 @@ def get_models(img_height, img_width, download_weights=True):
     if download_weights:
         text_encoder_weights_fpath = keras.utils.get_file(
             origin="https://huggingface.co/fchollet/stable-diffusion/resolve/main/text_encoder.h5",
+            fname="text_encoder.h5",
             file_hash="d7805118aeb156fc1d39e38a9a082b05501e2af8c8fbdc1753c9cb85212d6619",
         )
         diffusion_model_weights_fpath = keras.utils.get_file(
             origin="https://huggingface.co/fchollet/stable-diffusion/resolve/main/diffusion_model.h5",
+            fname="diffusion_model.h5",
             file_hash="a5b2eea58365b18b40caee689a2e5d00f4c31dbcb4e1d58a9cf1071f55bbbd3a",
         )
         decoder_weights_fpath = keras.utils.get_file(
             origin="https://huggingface.co/fchollet/stable-diffusion/resolve/main/decoder.h5",
+            fname="decoder.h5",
             file_hash="6d3c5ba91d5cc2b134da881aaa157b2d2adc648e5625560e3ed199561d0e39d5",
         )
 
         encoder_weights_fpath = keras.utils.get_file(
             origin="https://huggingface.co/divamgupta/stable-diffusion-tensorflow/resolve/main/encoder_newW.h5",
+            fname="encoder_newW.h5",
             file_hash="56a2578423c640746c5e90c0a789b9b11481f47497f817e65b44a1a5538af754",
         )
 
